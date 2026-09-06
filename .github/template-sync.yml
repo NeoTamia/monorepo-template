@@ -1,11 +1,8 @@
-# Files copied from this template into repositories created from it.
+# Copied into generated repos. They pull this template with GITHUB_TOKEN.
 
-discover: true
-skip_archived: true
+source:
+source_ref:
 prefer_branch: dev
-
-include_repos:
-exclude_repos:
 
 identity:
   extra:
