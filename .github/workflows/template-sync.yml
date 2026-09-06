@@ -1,0 +1,39 @@
+# Pushes template changes to repositories generated from this repo.
+# Nested templates fan out to their own children after merge.
+#
+# GitHub App (same one as Release Please) must be installed on those repos with:
+# contents: write, pull-requests: write, metadata: read, workflows: write.
+
+name: Template Sync
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Log the repos and files that would change, without opening PRs"
+        type: boolean
+        default: false
+      draft_pr:
+        description: "Open downstream PRs as drafts"
+        type: boolean
+        default: false
+
+concurrency:
+  group: template-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Sync generated repositories
+    if: ${{ github.event.repository.is_template }}
+    uses: NeoTamia/actions/.github/workflows/template-sync.yml@main
+    permissions:
+      contents: read
+    secrets: inherit
+    with:
+      dry_run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
+      draft_pr: ${{ github.event_name == 'workflow_dispatch' && inputs.draft_pr || false }}

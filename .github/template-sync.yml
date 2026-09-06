@@ -1,0 +1,55 @@
+# Files copied from this template into repositories created from it.
+
+discover: true
+skip_archived: true
+prefer_branch: dev
+
+include_repos:
+exclude_repos:
+
+identity:
+  extra:
+    "@neotamia/monorepo-template": "@{owner_lower}/{kebab}"
+    NeoTamia/monorepo-template: "{owner}/{kebab}"
+    ghcr.io/neotamia: "ghcr.io/{owner_lower}"
+    "@alwyn974": "@{owner}"
+  owner_files:
+    - README.md
+    - CONTRIBUTING.md
+
+overwrite:
+  - .github/renovate.json5
+  - .github/ISSUE_TEMPLATE/**
+  - .github/PULL_REQUEST_TEMPLATE.md
+  - .github/workflows/template-sync.yml
+  - .github/workflows/ci.yaml
+  - .github/workflows/oci.yaml
+  - .github/workflows/release-please.yaml
+  - .github/workflows/security.yaml
+  - CODE_OF_CONDUCT.md
+  - CONTRIBUTING.md
+  - lefthook.yml
+  - commitlint.config.ts
+  - turbo.json
+  - Dockerfile
+  - SECURITY.md
+
+merge_json:
+  - package.json
+  - apps/*/package.json
+  - packages/*/package.json
+
+three_way:
+  - tsconfig.json
+  - compose.yaml
+  - compose.production.yaml
+  - .github/template-sync.yml
+
+exclude:
+  - .github/workflows/project-setup.yaml
+  - .github/template-sync-state.json
+  - apps/*/src/**
+  - apps/*/app/**
+  - packages/*/src/**
+  - bun.lock
+  - README.md
