@@ -35,10 +35,10 @@ three_way:
   - tsconfig.json
   - compose.yaml
   - compose.production.yaml
-  - .github/template-sync.yml
 
 exclude:
   - .github/workflows/**
+  - .github/template-sync.yml
   - .github/template-sync-state.json
   - apps/*/src/**
   - apps/*/app/**
