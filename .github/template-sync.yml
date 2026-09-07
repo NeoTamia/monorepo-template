@@ -15,7 +15,6 @@ identity:
     - CONTRIBUTING.md
 
 overwrite:
-  - .github/workflows/template-sync.yml
 
 merge_json:
   - package.json
@@ -26,10 +25,6 @@ three_way:
   - .github/renovate.json5
   - .github/ISSUE_TEMPLATE/**
   - .github/PULL_REQUEST_TEMPLATE.md
-  - .github/workflows/ci.yaml
-  - .github/workflows/oci.yaml
-  - .github/workflows/release-please.yaml
-  - .github/workflows/security.yaml
   - CODE_OF_CONDUCT.md
   - CONTRIBUTING.md
   - lefthook.yml
@@ -43,7 +38,7 @@ three_way:
   - .github/template-sync.yml
 
 exclude:
-  - .github/workflows/project-setup.yaml
+  - .github/workflows/**
   - .github/template-sync-state.json
   - apps/*/src/**
   - apps/*/app/**
