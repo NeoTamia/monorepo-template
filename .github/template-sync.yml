@@ -15,10 +15,17 @@ identity:
     - CONTRIBUTING.md
 
 overwrite:
+  - .github/workflows/template-sync.yml
+
+merge_json:
+  - package.json
+  - apps/*/package.json
+  - packages/*/package.json
+
+three_way:
   - .github/renovate.json5
   - .github/ISSUE_TEMPLATE/**
   - .github/PULL_REQUEST_TEMPLATE.md
-  - .github/workflows/template-sync.yml
   - .github/workflows/ci.yaml
   - .github/workflows/oci.yaml
   - .github/workflows/release-please.yaml
@@ -30,13 +37,6 @@ overwrite:
   - turbo.json
   - Dockerfile
   - SECURITY.md
-
-merge_json:
-  - package.json
-  - apps/*/package.json
-  - packages/*/package.json
-
-three_way:
   - tsconfig.json
   - compose.yaml
   - compose.production.yaml
