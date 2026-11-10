@@ -9,7 +9,7 @@ identity:
     "@neotamia/monorepo-template": "@{owner_lower}/{kebab}"
     NeoTamia/monorepo-template: "{owner}/{kebab}"
     ghcr.io/neotamia: "ghcr.io/{owner_lower}"
-    "@NeoTamia": "@{owner}"
+    "@alwyn974": "@{owner}"
   owner_files:
     - README.md
     - CONTRIBUTING.md
