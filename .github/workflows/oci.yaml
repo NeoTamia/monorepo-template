@@ -1,0 +1,108 @@
+name: OCI images
+
+on:
+  pull_request:
+    branches: [dev, main]
+  workflow_dispatch:
+  push:
+    branches: [main]
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: oci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Validate publication source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6c
+        with:
+          bun-version: 1.4.0
+      - run: bun install --frozen-lockfile
+      - run: bun run format:check && bun run lint && bun run typecheck && bun run build
+
+  publish:
+    needs: quality
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    name: Build, scan and publish ${{ matrix.target }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [api, web]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+      - name: Compute image name
+        id: image
+        env:
+          REPOSITORY: ${{ github.repository }}
+        run: echo "name=ghcr.io/${REPOSITORY,,}-${{ matrix.target }}" >> "$GITHUB_OUTPUT"
+      - name: Build scan candidate
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          cache-from: type=gha,scope=${{ matrix.target }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.target }}
+          context: .
+          load: true
+          push: false
+          tags: ${{ steps.image.outputs.name }}:scan
+          target: ${{ matrix.target }}
+      - name: Reject high or critical vulnerabilities
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          exit-code: "1"
+          format: table
+          ignore-unfixed: true
+          image-ref: ${{ steps.image.outputs.name }}:scan
+          scanners: vuln,secret
+          severity: CRITICAL,HIGH
+      - if: github.event_name != 'pull_request'
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Compute immutable tags
+        if: github.event_name != 'pull_request'
+        id: tags
+        shell: bash
+        run: |
+          image="${{ steps.image.outputs.name }}"
+          tags="$image:sha-${GITHUB_SHA}"
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            tags="$tags,$image:${GITHUB_REF_NAME#v}"
+            if [[ "$GITHUB_REF_NAME" != *-* ]]; then
+              tags="$tags,$image:latest"
+            fi
+          fi
+          echo "value=$tags" >> "$GITHUB_OUTPUT"
+      - name: Publish with SBOM and provenance
+        if: github.event_name != 'pull_request'
+        id: publish
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          cache-from: type=gha,scope=${{ matrix.target }}
+          context: .
+          labels: |
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+          platforms: linux/amd64
+          provenance: mode=max
+          push: true
+          sbom: true
+          tags: ${{ steps.tags.outputs.value }}
+          target: ${{ matrix.target }}
+      - if: github.event_name != 'pull_request'
+        run: echo '${{ matrix.target }}=${{ steps.publish.outputs.digest }}' >> "$GITHUB_STEP_SUMMARY"

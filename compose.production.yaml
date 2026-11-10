@@ -1,0 +1,103 @@
+name: monorepo-template-production
+
+x-runtime: &runtime
+  init: true
+  restart: unless-stopped
+  read_only: true
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+  tmpfs:
+    - /tmp:size=64m,mode=1777
+  stop_grace_period: 30s
+
+services:
+  postgres:
+    image: postgres:18.4-trixie@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636
+    environment:
+      POSTGRES_DB: app
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_USER: app
+    secrets:
+      - postgres_password
+    networks:
+      - data
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d app"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    restart: unless-stopped
+    shm_size: 256mb
+    mem_limit: 1g
+    cpus: 1.5
+
+  api:
+    <<: *runtime
+    image: ${IMAGE_REGISTRY:-ghcr.io/neotamia}/monorepo-template-api@${API_IMAGE_DIGEST:?set API_IMAGE_DIGEST}
+    environment:
+      API_HOST: 0.0.0.0
+      API_PORT: 8080
+      CORS_ORIGINS: ${CORS_ORIGINS:?set CORS_ORIGINS}
+      DATABASE_URL_FILE: /run/secrets/database_url
+      NODE_ENV: production
+    secrets:
+      - database_url
+    expose:
+      - "8080"
+    networks:
+      - data
+      - edge
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "--show-error", "http://localhost:8080/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    mem_limit: 512m
+    cpus: 1
+
+  web:
+    <<: *runtime
+    image: ${IMAGE_REGISTRY:-ghcr.io/neotamia}/monorepo-template-web@${WEB_IMAGE_DIGEST:?set WEB_IMAGE_DIGEST}
+    environment:
+      NITRO_HOST: 0.0.0.0
+      NITRO_PORT: 3000
+      NUXT_API_BASE_URL: http://api:8080
+      NUXT_PUBLIC_API_BASE_URL: ${NUXT_PUBLIC_API_BASE_URL:?set NUXT_PUBLIC_API_BASE_URL}
+    expose:
+      - "3000"
+    networks:
+      - edge
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "--show-error", "http://localhost:3000/"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    mem_limit: 384m
+    cpus: 0.75
+
+networks:
+  data:
+    internal: true
+  edge:
+
+volumes:
+  postgres-data:
+
+secrets:
+  database_url:
+    file: ./deploy/secrets/database_url
+  postgres_password:
+    file: ./deploy/secrets/postgres_password
