@@ -11,8 +11,7 @@ permissions:
 jobs:
   setup:
     name: Setup Project
-    # Protect the source even when GitHub's template setting is disabled.
-    if: ${{ github.repository != 'NeoTamia/monorepo-template' && !github.event.repository.is_template }}
+    if: ${{ !github.event.repository.is_template }}
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
