@@ -1,0 +1,12 @@
+{
+  "$schema": "../../../node_modules/oxlint/configuration_schema.json",
+  "categories": { "correctness": "error", "perf": "warn", "suspicious": "warn" },
+  "plugins": ["import", "typescript", "unicorn", "vue"],
+  "rules": {
+    "eqeqeq": "error",
+    "no-console": ["warn", { "allow": ["error", "info", "warn"] }],
+    "typescript/no-explicit-any": "error",
+    "unicorn/prefer-node-protocol": "error"
+  },
+  "ignorePatterns": ["**/.nuxt/**", "**/.output/**", "**/dist/**", "**/coverage/**"]
+}

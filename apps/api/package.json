@@ -1,0 +1,27 @@
+{
+  "name": "@neotamia/monorepo-template-api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "bun build src/index.ts --outdir dist --target bun && mkdir -p migrations && cp -R ../../packages/database/migrations/. migrations/",
+    "dev": "bun --watch src/index.ts",
+    "start": "bun dist/index.js",
+    "test:coverage": "bun test --coverage tests/unit tests/integration",
+    "test:integration": "bun test tests/integration",
+    "test:unit": "bun test tests/unit",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@elysiajs/cors": "1.4.2",
+    "@neotamia/monorepo-template-contracts": "workspace:*",
+    "@neotamia/monorepo-template-database": "workspace:*",
+    "drizzle-orm": "0.45.2",
+    "elysia": "1.4.29"
+  },
+  "devDependencies": {
+    "@neotamia/monorepo-template-config": "workspace:*",
+    "@types/bun": "1.4.0",
+    "typescript": "6.0.3"
+  }
+}

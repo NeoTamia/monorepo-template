@@ -1,0 +1,24 @@
+{
+  "name": "@neotamia/monorepo-template-contracts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./todos": "./src/todos.ts"
+  },
+  "scripts": {
+    "build": "bun build src/index.ts --outdir dist --target browser --format esm",
+    "test:coverage": "bun test --coverage tests/unit",
+    "test:unit": "bun test tests/unit",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@sinclair/typebox": "0.34.52"
+  },
+  "devDependencies": {
+    "@neotamia/monorepo-template-config": "workspace:*",
+    "@types/bun": "1.4.0",
+    "typescript": "6.0.3"
+  }
+}

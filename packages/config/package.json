@@ -1,0 +1,13 @@
+{
+  "name": "@neotamia/monorepo-template-config",
+  "version": "0.0.0",
+  "private": true,
+  "files": [
+    "oxlint",
+    "tsconfig"
+  ],
+  "exports": {
+    "./oxlint/base.json": "./oxlint/base.json",
+    "./tsconfig/base.json": "./tsconfig/base.json"
+  }
+}

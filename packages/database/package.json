@@ -1,0 +1,29 @@
+{
+  "name": "@neotamia/monorepo-template-database",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./test-support": "./src/test-support.ts"
+  },
+  "scripts": {
+    "build": "bun build src/index.ts --outdir dist --target bun --external postgres",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "bun src/migrate.ts",
+    "test:coverage": "bun test --coverage tests/integration",
+    "test:integration": "bun test tests/integration",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@neotamia/monorepo-template-contracts": "workspace:*",
+    "drizzle-orm": "0.45.2",
+    "postgres": "3.4.9"
+  },
+  "devDependencies": {
+    "@neotamia/monorepo-template-config": "workspace:*",
+    "@types/bun": "1.4.0",
+    "drizzle-kit": "0.31.10",
+    "typescript": "6.0.3"
+  }
+}

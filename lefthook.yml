@@ -1,0 +1,21 @@
+pre-commit:
+  parallel: false
+  commands:
+    format:
+      glob: "*.{css,html,js,json,json5,jsonc,jsx,md,mjs,ts,tsx,vue,yaml,yml}"
+      run: bunx oxfmt --write {staged_files}
+      stage_fixed: true
+    lint:
+      glob: "*.{js,jsx,mjs,ts,tsx,vue}"
+      run: bunx oxlint --fix {staged_files}
+      stage_fixed: true
+
+commit-msg:
+  commands:
+    commitlint:
+      run: bunx commitlint --edit {1}
+
+pre-push:
+  commands:
+    affected:
+      run: bun x turbo run typecheck test:unit --affected

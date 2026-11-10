@@ -1,0 +1,43 @@
+{
+  "name": "@neotamia/monorepo-template",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "type": "module",
+  "scripts": {
+    "build": "turbo run build",
+    "check": "bun run format:check && bun run lint && bun run typecheck && bun run test:unit && bun run build",
+    "db:generate": "bun --filter @neotamia/monorepo-template-database db:generate",
+    "db:migrate": "bun --env-file=.env packages/database/src/migrate.ts",
+    "dev": "bun --env-file=.env turbo run dev --filter='./apps/*' --env-mode=loose",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check .",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint --fix .",
+    "prepare": "lefthook install",
+    "test": "bun run test:unit && bun run test:integration",
+    "test:coverage": "turbo run test:coverage --env-mode=loose",
+    "test:e2e": "bun --env-file=.env tooling/assert-test-database.ts && playwright test",
+    "test:integration": "bun --env-file=.env tooling/assert-test-database.ts && turbo run test:integration --concurrency=1 --env-mode=loose",
+    "test:unit": "turbo run test:unit",
+    "typecheck": "turbo run typecheck"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "20.1.0",
+    "@commitlint/config-conventional": "20.0.0",
+    "@playwright/test": "1.61.1",
+    "@types/bun": "1.4.0",
+    "lefthook": "2.1.10",
+    "oxfmt": "0.62.0",
+    "oxlint": "1.77.0",
+    "turbo": "2.10.9",
+    "typescript": "6.0.3"
+  },
+  "engines": {
+    "bun": "1.4.0"
+  },
+  "packageManager": "bun@1.4.0"
+}
