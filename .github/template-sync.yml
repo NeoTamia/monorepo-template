@@ -22,6 +22,18 @@ merge_json:
   - packages/*/package.json
 
 three_way:
+  - AGENTS.md
+  - CODING_STANDARDS.md
+  - .editorconfig
+  - .oxlintrc.json
+  - .oxfmtrc.json
+  - .dockerignore
+  - .gitignore
+  - packages/config/oxlint/**
+  - packages/config/tsconfig/**
+  - deploy/README.md
+  - deploy/production.env.example
+  - .env.example
   - .github/renovate.json5
   - .github/ISSUE_TEMPLATE/**
   - .github/PULL_REQUEST_TEMPLATE.md

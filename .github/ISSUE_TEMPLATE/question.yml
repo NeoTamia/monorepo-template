@@ -1,0 +1,28 @@
+name: Question
+description: Ask for help using the template
+title: "[Question]: "
+labels: ["❓ question"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: State the outcome you are trying to reach and where you are blocked.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Include relevant commands, code, versions and redacted output.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I read the README and contributing guide.
+          required: true
+        - label: I searched existing issues.
+          required: true

@@ -1,0 +1,28 @@
+name: Feature request
+description: Propose an improvement to the template
+title: "[Feature]: "
+labels: ["✨ feature"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What becomes difficult without this change?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the behavior and which template boundaries it affects.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Include examples, constraints or compatibility concerns.
